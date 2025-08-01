@@ -1,0 +1,50 @@
+[project]
+name = "funasr-client"
+version = "0.1.0"
+description = "FunASR WebSocket Client."
+readme = "README.md"
+authors = [
+    { name = "Atomie CHEN", email = "atomic_cwh@163.com" }
+]
+requires-python = ">=3.8"
+keywords = ["funasr", "funasr-client", "websocket", "websockets", "asr", "asynchronous", "asyncio"]
+dependencies = [
+    "typing-extensions>=4.13.2",
+    "websockets>=13.1",
+]
+
+[project.scripts]
+funasr-client = "funasr_client.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.5",
+    "pytest-asyncio>=0.24.0",
+    "python-dotenv>=1.0.1",
+    "ruff>=0.12.5",
+]
+mic = [
+    "pyaudio>=0.2.14",
+]
+
+[tool.uv]
+default-groups = "all"
+
+[project.urls]
+homepage = "https://github.com/atomiechen/FunASR-Client"
+issues = "https://github.com/atomiechen/FunASR-Client/issues"
+changelog = "https://github.com/atomiechen/FunASR-Client/blob/main/CHANGELOG.md"
+
+[[tool.uv.index]]
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+
+
+[tool.pytest.ini_options]
+# ignore files in examples directory
+addopts = [
+  "--ignore=examples"
+]
