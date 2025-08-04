@@ -19,6 +19,7 @@ from funasr_client import (
 def open_mic(
     sample_rate: int,
     frames_per_buffer: int,
+    start: bool,
 ):
     # This is a runtime check to avoid import errors at the top level
     # since this module is optional and may not be installed.
@@ -39,6 +40,7 @@ def open_mic(
             rate=sample_rate,
             input=True,
             frames_per_buffer=frames_per_buffer,
+            start=start,
         )
         yield stream
     finally:
@@ -78,8 +80,8 @@ def mic_asr(
     with open_mic(
         sample_rate=sample_rate,
         frames_per_buffer=frames_per_buffer,
+        start=False,  # do not start the stream immediately
     ) as stream:
-        start_time = int(time.time() * 1000)
         with funasr_client(
             uri=uri,
             mode=mode,
@@ -92,8 +94,11 @@ def mic_asr(
             svs_itn=svs_itn,
             blocking=True,
             decode=True,
-            start_time=start_time,  # Set start time for decoding
         ) as client:
+            # start the stream when connection is ready
+            stream.start_stream()
+            client.start_time = int(time.time() * 1000) # Set start time for decoding
+
             stop_event = threading.Event()
             mic_thread = threading.Thread(
                 target=lambda: send_mic(
@@ -148,8 +153,8 @@ async def async_mic_asr(
     with open_mic(
         sample_rate=sample_rate,
         frames_per_buffer=frames_per_buffer,
+        start=False,  # do not start the stream immediately
     ) as stream:
-        start_time = int(time.time() * 1000)
         async with async_funasr_client(
             uri=uri,
             mode=mode,
@@ -162,8 +167,11 @@ async def async_mic_asr(
             svs_itn=svs_itn,
             blocking=True,
             decode=True,
-            start_time=start_time,  # Set start time for decoding
         ) as client:
+            # start the stream when connection is ready
+            stream.start_stream()
+            client.start_time = int(time.time() * 1000) # Set start time for decoding
+
             lock = threading.Lock()
 
             def read_func():
