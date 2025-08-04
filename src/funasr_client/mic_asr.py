@@ -102,7 +102,7 @@ def mic_asr(
             stop_event = threading.Event()
             mic_thread = threading.Thread(
                 target=lambda: send_mic(
-                    client, stop_event, lambda: stream.read(frames_per_buffer)
+                    client, stop_event, lambda: stream.read(frames_per_buffer, exception_on_overflow=False)
                 ),
                 # daemon=True,
             )
@@ -180,7 +180,7 @@ async def async_mic_asr(
                     # Block until data is available. No other way to interrupt.
                     # NOTE: MUST not close the stream at this point,
                     # otherwise read() will block the thread forever.
-                    return stream.read(frames_per_buffer)
+                    return stream.read(frames_per_buffer, exception_on_overflow=False)
 
             task = asyncio.create_task(async_send_mic(client, read_func))
             try:
