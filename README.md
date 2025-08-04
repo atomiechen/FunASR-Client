@@ -39,11 +39,11 @@ pip install "git+https://github.com/atomiechen/FunASR-Client.git"
 
 ## CLI
 
-The CLI supports either real-time microphone input or file input for ASR, and outputs the recognized results in JSON (file) or JSON Lines (mic) format.
+The CLI `funasr-client` or `python -m funasr_client` supports either real-time microphone input or file input for ASR, and outputs the recognized results in JSON (file) or JSON Lines (mic) format.
 
 
 <details>
-<summary>View all CLI options by running <code>funasr-client -h</code>.</summary>
+<summary>View all CLI options by specifying <code>-h</code>.</summary>
 
 ```
 usage: funasr-client [-h] [-v] [--mode MODE] [--chunk_size P C F] [--chunk_interval CHUNK_INTERVAL] [--audio_fs AUDIO_FS]
