@@ -5,6 +5,19 @@ All notable changes will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 
+## [0.1.1] - 2025-08-05
+
+### Added
+
+- Support `python -m funasr_client` usage
+
+### Fixed
+
+- `mic_asr`
+  - do not start the mic stream until connection is ready
+  - do not throw input buffer overflow exception
+
+
 
 ## [0.1.0] - 2025-08-04
 
