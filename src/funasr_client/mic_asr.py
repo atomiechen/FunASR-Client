@@ -1,5 +1,6 @@
 import asyncio
 from contextlib import asynccontextmanager, contextmanager
+import sys
 import threading
 import time
 from typing import Callable, Dict, Tuple
@@ -112,10 +113,18 @@ async def async_send_mic(
     client: AsyncFunASRClient[FunASRMessageDecoded],
     read_func: Callable[[], bytes],
 ):
-    loop = asyncio.get_running_loop()
-    while True:
-        data = await loop.run_in_executor(None, read_func)
-        await client.send(data)
+    try:
+        loop = asyncio.get_running_loop()
+        while True:
+            data = await loop.run_in_executor(None, read_func)
+            await client.send(data)
+    except Exception:
+        import traceback
+
+        # report the exception to stderr instead of silently failing
+        print("Exception in async_send_mic:", file=sys.stderr)
+        traceback.print_exc()
+        raise
 
 
 @asynccontextmanager
