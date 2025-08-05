@@ -1,16 +1,43 @@
 from abc import ABC
+import inspect
 import json
 import ssl
 from typing import Any, Callable, Dict, Generic, Optional, Tuple, TypeVar
 from urllib.parse import urlparse
 
 from websockets.sync.client import connect as ws_connect
+from websockets.sync.connection import Connection
 
 from .types import FunASRMessageLike, InitMessageMode
 from .utils import typed_params
 
 
 MessageType = TypeVar("MessageType", bound=FunASRMessageLike)
+
+
+def ws_sync_supports_ping_interval():
+    """
+    Check if the current version of `websockets` supports `ping_interval`
+    in `websockets.sync.client.connect` or `websockets.sync.connection.Connection`.
+    In principal, `websockets >= 15.0` supports `ping_interval` in both
+    `threading` and `asyncio` implementations of client.
+    """
+    try:
+        sig = inspect.signature(ws_connect)
+        if "ping_interval" in sig.parameters:
+            return True
+    except Exception:
+        pass
+    try:
+        sig = inspect.signature(Connection.__init__)
+        if "ping_interval" in sig.parameters:
+            return True
+    except Exception:
+        pass
+    return False
+
+
+has_ping_interval = ws_sync_supports_ping_interval()
 
 
 class BaseFunASRClient(ABC, Generic[MessageType]):
@@ -124,10 +151,19 @@ class BaseFunASRClient(ABC, Generic[MessageType]):
         elif parsed_uri.scheme != "ws":
             raise ValueError(f"Unsupported URI scheme: {parsed_uri.scheme}")
 
-        return typed_params(
-            ws_connect,
-            self.uri,
-            ssl=ssl_context,
-            subprotocols=["binary"],  # type: ignore
-            ping_interval=None,
-        )
+        # check and disable `ping_interval`; we don't need it either way
+        if has_ping_interval:
+            return typed_params(
+                ws_connect,
+                self.uri,
+                ssl=ssl_context,
+                subprotocols=["binary"],  # type: ignore
+                ping_interval=None,  # disable ping_interval
+            )
+        else:
+            return typed_params(
+                ws_connect,
+                self.uri,
+                ssl=ssl_context,
+                subprotocols=["binary"],  # type: ignore
+            )
