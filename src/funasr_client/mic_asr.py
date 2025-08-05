@@ -97,12 +97,14 @@ def mic_asr(
         ) as client:
             # start the stream when connection is ready
             stream.start_stream()
-            client.start_time = int(time.time() * 1000) # Set start time for decoding
+            client.start_time = int(time.time() * 1000)  # Set start time for decoding
 
             stop_event = threading.Event()
             mic_thread = threading.Thread(
                 target=lambda: send_mic(
-                    client, stop_event, lambda: stream.read(frames_per_buffer, exception_on_overflow=False)
+                    client,
+                    stop_event,
+                    lambda: stream.read(frames_per_buffer, exception_on_overflow=False),
                 ),
                 # daemon=True,
             )
@@ -170,7 +172,7 @@ async def async_mic_asr(
         ) as client:
             # start the stream when connection is ready
             stream.start_stream()
-            client.start_time = int(time.time() * 1000) # Set start time for decoding
+            client.start_time = int(time.time() * 1000)  # Set start time for decoding
 
             lock = threading.Lock()
 
