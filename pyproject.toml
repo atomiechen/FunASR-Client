@@ -1,12 +1,17 @@
 [project]
 name = "funasr-client"
-version = "0.1.1"
-description = "FunASR WebSocket Client."
+version = "0.1.2"
+description = "Easy-to-use client for FunASR runtime server."
 readme = "README.md"
 authors = [
     { name = "Atomie CHEN", email = "atomic_cwh@163.com" }
 ]
 requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
 keywords = ["funasr", "funasr-client", "websocket", "websockets", "asr", "asynchronous", "asyncio"]
 dependencies = [
     "typing-extensions>=4.13.2",
