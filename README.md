@@ -4,9 +4,10 @@
 [![PyPI](https://img.shields.io/pypi/v/funasr-client?logo=pypi&logoColor=white)](https://pypi.org/project/funasr-client/)
 
 
-Really easy-to-use Python client for [FunASR][1] runtime server.
+Really easy-to-use Python client for [FunASR][1] runtime service.
 
-To deploy your own FunASR server, follow the [FunASR runtime guide][2], or use the improved startup scripts [here][3].
+To deploy your own FunASR service, follow the [FunASR runtime guide][2], or use the improved [startup scripts][3].
+For other client implementations in different languages, see [below](#different-client-implementations).
 
 ## Features
 
@@ -200,6 +201,19 @@ with file_asr_stream("path/to/audio.wav", "ws://localhost:10096") as msg_gen:
     for msg in msg_gen:
         print("Received:", msg)
 ```
+
+
+## Different Client Implementations
+
+- [Python](https://github.com/atomiechen/FunASR-Client)
+- [TS/JS](https://github.com/atomiechen/funasr-client-ts)
+
+
+## References
+
+- FunASR webSocket protocol ([English](https://github.com/modelscope/FunASR/blob/main/runtime/docs/websocket_protocol.md) | [简体中文](https://github.com/modelscope/FunASR/blob/main/runtime/docs/websocket_protocol_zh.md))
+- FunASR runtime service ([English](https://github.com/modelscope/FunASR/blob/main/runtime/readme.md) | [简体中文](https://github.com/modelscope/FunASR/blob/main/runtime/readme_cn.md))
+- [Handy startup scripts][3] for FunASR runtime service
 
 
 [1]: https://github.com/modelscope/FunASR
