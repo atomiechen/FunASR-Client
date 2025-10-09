@@ -8,8 +8,8 @@ from urllib.parse import urlparse
 from websockets.sync.client import connect as ws_connect
 from websockets.sync.connection import Connection
 
-from .types import FunASRMessageLike, InitMessageMode
-from .utils import typed_params
+from .types import FunASRMessage, FunASRMessageLike, InitMessageMode
+from .utils import typed_params, decode_msg
 
 
 MessageType = TypeVar("MessageType", bound=FunASRMessageLike)
@@ -167,3 +167,6 @@ class BaseFunASRClient(ABC, Generic[MessageType]):
                 ssl=ssl_context,
                 subprotocols=["binary"],  # type: ignore
             )
+
+    def decode_msg(self, msg: FunASRMessage):
+        return decode_msg(msg, start_time=self.start_time)

@@ -15,7 +15,7 @@ from websockets.exceptions import ConnectionClosedOK
 
 from .base_client import BaseFunASRClient
 from .types import FunASRMessageLike
-from .utils import sync_to_async, decode_msg, is_final_msg
+from .utils import sync_to_async, is_final_msg
 
 
 module_logger = logging.getLogger(__name__)
@@ -148,7 +148,7 @@ class AsyncFunASRClient(BaseFunASRClient[MessageType]):
             raise TimeoutError() from e.__cause__
         response = json.loads(message)
         if self.decode:
-            response = decode_msg(response, self.start_time)
+            response = self.decode_msg(response)
         response = cast(MessageType, response)
         if is_final_msg(response):
             self._received_final = True
