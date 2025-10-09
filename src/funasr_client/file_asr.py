@@ -95,6 +95,7 @@ def file_asr_stream(
     svs_itn: bool = True,
     *,
     decode: Literal[True] = True,
+    start_time: int = 0,
 ) -> Generator[FunASRMessageDecoded, Any, None]: ...
 
 
@@ -113,6 +114,7 @@ def file_asr_stream(
     svs_itn: bool = True,
     *,
     decode: Literal[False],
+    start_time: int = 0,
 ) -> Generator[FunASRMessage, Any, None]: ...
 
 
@@ -130,6 +132,7 @@ def file_asr_stream(
     svs_itn: bool = True,
     *,
     decode: bool = True,
+    start_time: int = 0,
 ):
     """
     Recognize audio file and yield (decoded) messages.
@@ -155,6 +158,7 @@ def file_asr_stream(
             svs_itn=svs_itn,
             blocking=True,
             decode=decode,
+            start_time=start_time,
         ) as client:
             read_done = False
             while True:
@@ -187,6 +191,8 @@ def file_asr(
     itn: bool = True,
     svs_lang: str = "auto",
     svs_itn: bool = True,
+    *,
+    start_time: int = 0,
 ):
     """
     Recognize audio file and return the merged decoded message.
@@ -205,6 +211,7 @@ def file_asr(
             svs_lang=svs_lang,
             svs_itn=svs_itn,
             decode=True,
+            start_time=start_time,
         )
     )
 
@@ -224,6 +231,7 @@ async def async_file_asr_stream(
     svs_itn: bool = True,
     *,
     decode: Literal[True] = True,
+    start_time: int = 0,
 ) -> AsyncGenerator[FunASRMessageDecoded, Any]:
     yield ...
 
@@ -243,6 +251,7 @@ async def async_file_asr_stream(
     svs_itn: bool = True,
     *,
     decode: Literal[False],
+    start_time: int = 0,
 ) -> AsyncGenerator[FunASRMessage, Any]:
     yield ...
 
@@ -261,6 +270,7 @@ async def async_file_asr_stream(
     svs_itn: bool = True,
     *,
     decode: bool = True,
+    start_time: int = 0,
 ):
     """
     Recognize audio file and yield (decoded) messages.
@@ -288,6 +298,7 @@ async def async_file_asr_stream(
             svs_itn=svs_itn,
             blocking=True,
             decode=decode,
+            start_time=start_time,
         ) as client:
             read_done = False
             loop = asyncio.get_running_loop()
@@ -321,6 +332,8 @@ async def async_file_asr(
     itn: bool = True,
     svs_lang: str = "auto",
     svs_itn: bool = True,
+    *,
+    start_time: int = 0,
 ):
     """
     Recognize audio file and return the merged decoded message.
@@ -341,5 +354,6 @@ async def async_file_asr(
             svs_lang=svs_lang,
             svs_itn=svs_itn,
             decode=True,
+            start_time=start_time,
         )
     )
