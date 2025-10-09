@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, Literal, Optional, Tuple, overload
+from typing import Any, Callable, Dict, Literal, Optional, Tuple, Union, overload
 
 from .client import FunASRClient
 from .async_client import AsyncFunASRClient
@@ -8,15 +8,15 @@ from .types import InitMessageMode, FunASRMessage, FunASRMessageDecoded
 @overload
 def funasr_client(
     uri: str,
-    mode: InitMessageMode = "2pass",
+    mode: Optional[InitMessageMode] = None,
     chunk_size: Tuple[int, int, int] = (5, 10, 5),
-    wav_name: str = "python-client",
+    wav_name: Optional[str] = None,
     wav_format: Optional[str] = None,
     audio_fs: Optional[int] = None,
-    hotwords: Dict[str, int] = {},
-    itn: bool = True,
-    svs_lang: str = "auto",
-    svs_itn: bool = True,
+    hotwords: Optional[Dict[str, int]] = None,
+    itn: Optional[bool] = None,
+    svs_lang: Optional[str] = None,
+    svs_itn: Optional[bool] = None,
     *,
     callback: Optional[Callable[[FunASRMessageDecoded], Any]] = None,
     blocking: bool = False,  # If True, use stream() / recv() to get responses
@@ -29,15 +29,15 @@ def funasr_client(
 @overload
 def funasr_client(
     uri: str,
-    mode: InitMessageMode = "2pass",
+    mode: Optional[InitMessageMode] = None,
     chunk_size: Tuple[int, int, int] = (5, 10, 5),
-    wav_name: str = "python-client",
+    wav_name: Optional[str] = None,
     wav_format: Optional[str] = None,
     audio_fs: Optional[int] = None,
-    hotwords: Dict[str, int] = {},
-    itn: bool = True,
-    svs_lang: str = "auto",
-    svs_itn: bool = True,
+    hotwords: Optional[Dict[str, int]] = None,
+    itn: Optional[bool] = None,
+    svs_lang: Optional[str] = None,
+    svs_itn: Optional[bool] = None,
     *,
     callback: Optional[Callable[[FunASRMessage], Any]] = None,
     blocking: bool = False,  # If True, use stream() / recv() to get responses
@@ -47,17 +47,38 @@ def funasr_client(
 ) -> FunASRClient[FunASRMessage]: ...
 
 
+@overload
 def funasr_client(
     uri: str,
-    mode: InitMessageMode = "2pass",
+    mode: Optional[InitMessageMode] = None,
     chunk_size: Tuple[int, int, int] = (5, 10, 5),
-    wav_name: str = "python-client",
+    wav_name: Optional[str] = None,
     wav_format: Optional[str] = None,
     audio_fs: Optional[int] = None,
-    hotwords: Dict[str, int] = {},
-    itn: bool = True,
-    svs_lang: str = "auto",
-    svs_itn: bool = True,
+    hotwords: Optional[Dict[str, int]] = None,
+    itn: Optional[bool] = None,
+    svs_lang: Optional[str] = None,
+    svs_itn: Optional[bool] = None,
+    *,
+    callback: Optional[Callable[[FunASRMessage], Any]] = None,
+    blocking: bool = False,  # If True, use stream() / recv() to get responses
+    auto_connect_in_with: bool = True,
+    decode: bool = True,
+    start_time: int = 0,  # If > 0, decoded messages will include real timestamps
+) -> Union[FunASRClient[FunASRMessage], FunASRClient[FunASRMessageDecoded]]: ...
+
+
+def funasr_client(
+    uri: str,
+    mode: Optional[InitMessageMode] = None,
+    chunk_size: Tuple[int, int, int] = (5, 10, 5),
+    wav_name: Optional[str] = None,
+    wav_format: Optional[str] = None,
+    audio_fs: Optional[int] = None,
+    hotwords: Optional[Dict[str, int]] = None,
+    itn: Optional[bool] = None,
+    svs_lang: Optional[str] = None,
+    svs_itn: Optional[bool] = None,
     *,
     callback=None,
     blocking: bool = False,  # If True, use stream() / recv() to get responses
@@ -97,15 +118,15 @@ def funasr_client(
 @overload
 def async_funasr_client(
     uri: str,
-    mode: InitMessageMode = "2pass",
+    mode: Optional[InitMessageMode] = None,
     chunk_size: Tuple[int, int, int] = (5, 10, 5),
-    wav_name: str = "python-client",
+    wav_name: Optional[str] = None,
     wav_format: Optional[str] = None,
     audio_fs: Optional[int] = None,
-    hotwords: Dict[str, int] = {},
-    itn: bool = True,
-    svs_lang: str = "auto",
-    svs_itn: bool = True,
+    hotwords: Optional[Dict[str, int]] = None,
+    itn: Optional[bool] = None,
+    svs_lang: Optional[str] = None,
+    svs_itn: Optional[bool] = None,
     *,
     callback: Optional[Callable[[FunASRMessageDecoded], Any]] = None,
     blocking: bool = False,  # If True, use stream() / recv() to get responses
@@ -118,15 +139,15 @@ def async_funasr_client(
 @overload
 def async_funasr_client(
     uri: str,
-    mode: InitMessageMode = "2pass",
+    mode: Optional[InitMessageMode] = None,
     chunk_size: Tuple[int, int, int] = (5, 10, 5),
-    wav_name: str = "python-client",
+    wav_name: Optional[str] = None,
     wav_format: Optional[str] = None,
     audio_fs: Optional[int] = None,
-    hotwords: Dict[str, int] = {},
-    itn: bool = True,
-    svs_lang: str = "auto",
-    svs_itn: bool = True,
+    hotwords: Optional[Dict[str, int]] = None,
+    itn: Optional[bool] = None,
+    svs_lang: Optional[str] = None,
+    svs_itn: Optional[bool] = None,
     *,
     callback: Optional[Callable[[FunASRMessage], Any]] = None,
     blocking: bool = False,  # If True, use stream() / recv() to get responses
@@ -136,17 +157,40 @@ def async_funasr_client(
 ) -> AsyncFunASRClient[FunASRMessage]: ...
 
 
+@overload
 def async_funasr_client(
     uri: str,
-    mode: InitMessageMode = "2pass",
+    mode: Optional[InitMessageMode] = None,
     chunk_size: Tuple[int, int, int] = (5, 10, 5),
-    wav_name: str = "python-client",
+    wav_name: Optional[str] = None,
     wav_format: Optional[str] = None,
     audio_fs: Optional[int] = None,
-    hotwords: Dict[str, int] = {},
-    itn: bool = True,
-    svs_lang: str = "auto",
-    svs_itn: bool = True,
+    hotwords: Optional[Dict[str, int]] = None,
+    itn: Optional[bool] = None,
+    svs_lang: Optional[str] = None,
+    svs_itn: Optional[bool] = None,
+    *,
+    callback: Optional[Callable[[FunASRMessage], Any]] = None,
+    blocking: bool = False,  # If True, use stream() / recv() to get responses
+    auto_connect_in_with: bool = True,
+    decode: bool = True,
+    start_time: int = 0,  # If > 0, decoded messages will include real timestamps
+) -> Union[
+    AsyncFunASRClient[FunASRMessage], AsyncFunASRClient[FunASRMessageDecoded]
+]: ...
+
+
+def async_funasr_client(
+    uri: str,
+    mode: Optional[InitMessageMode] = None,
+    chunk_size: Tuple[int, int, int] = (5, 10, 5),
+    wav_name: Optional[str] = None,
+    wav_format: Optional[str] = None,
+    audio_fs: Optional[int] = None,
+    hotwords: Optional[Dict[str, int]] = None,
+    itn: Optional[bool] = None,
+    svs_lang: Optional[str] = None,
+    svs_itn: Optional[bool] = None,
     *,
     callback=None,
     blocking: bool = False,  # If True, use stream() / recv() to get responses

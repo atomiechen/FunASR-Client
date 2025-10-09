@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager, contextmanager
 import sys
 import threading
 import time
-from typing import Callable, Dict, Tuple
+from typing import Callable, Dict, Optional, Tuple
 
 from funasr_client import (
     funasr_client,
@@ -62,15 +62,15 @@ def send_mic(
 @contextmanager
 def mic_asr(
     uri: str,
-    mode: InitMessageMode = "2pass",
+    mode: Optional[InitMessageMode] = None,
     chunk_size: Tuple[int, int, int] = (5, 10, 5),
     chunk_interval: int = 10,
-    wav_name: str = "microphone",
+    wav_name: Optional[str] = None,
     sample_rate: int = 16000,
-    hotwords: Dict[str, int] = {},
-    itn: bool = True,
-    svs_lang: str = "auto",
-    svs_itn: bool = True,
+    hotwords: Optional[Dict[str, int]] = None,
+    itn: Optional[bool] = None,
+    svs_lang: Optional[str] = None,
+    svs_itn: Optional[bool] = None,
 ):
     """
     Real-time microphone ASR.
@@ -137,15 +137,15 @@ async def async_send_mic(
 @asynccontextmanager
 async def async_mic_asr(
     uri: str,
-    mode: InitMessageMode = "2pass",
+    mode: Optional[InitMessageMode] = None,
     chunk_size: Tuple[int, int, int] = (5, 10, 5),
     chunk_interval: int = 10,
-    wav_name: str = "microphone",
+    wav_name: Optional[str] = None,
     sample_rate: int = 16000,
-    hotwords: Dict[str, int] = {},
-    itn: bool = True,
-    svs_lang: str = "auto",
-    svs_itn: bool = True,
+    hotwords: Optional[Dict[str, int]] = None,
+    itn: Optional[bool] = None,
+    svs_lang: Optional[str] = None,
+    svs_itn: Optional[bool] = None,
 ):
     """
     Real-time microphone ASR.
