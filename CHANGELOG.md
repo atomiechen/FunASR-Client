@@ -5,6 +5,20 @@ All notable changes will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 
+
+## [0.1.3] - 2025-10-10
+
+### Added
+
+- `base_client`: make more arguments optional (default by service)
+- `file_asr`: add `start_time` parameter to file ASR functions
+
+### Fixed
+
+- README: fix example code of `file_asr_stream` (generator instead of with statement)
+
+
+
 ## [0.1.2] - 2025-08-05
 
 ### Fixed

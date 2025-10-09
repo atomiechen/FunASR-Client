@@ -1,6 +1,6 @@
 [project]
 name = "funasr-client"
-version = "0.1.2"
+version = "0.1.3"
 description = "Easy-to-use client for FunASR runtime server."
 readme = "README.md"
 authors = [
