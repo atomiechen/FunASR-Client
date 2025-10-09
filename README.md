@@ -197,9 +197,8 @@ Or, get the stream of **decoded or original** (depends on `decode` option) messa
 ```python
 from funasr_client import file_asr_stream
 
-with file_asr_stream("path/to/audio.wav", "ws://localhost:10096") as msg_gen:
-    for msg in msg_gen:
-        print("Received:", msg)
+for msg in file_asr_stream("path/to/audio.wav", "ws://localhost:10096"):
+    print("Received:", msg)
 ```
 
 
