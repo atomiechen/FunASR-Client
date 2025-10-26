@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 
 
+## [0.1.4] - 2025-10-26
+
+### Changed
+
+- Make arguments of factory methods (`funasr_client` / `async_funasr_client` / `file_asr` / `file_asr_stream` / `async_file_asr` / `async_file_asr_stream` / `mic_asr` / `async_mic_asr`) optional, aligning with `BaseFunASRClient` defaults.
+
+### Fixed
+
+- `mic` as optional dependency installation instruction in `pyproject.toml`.
+
+
+
 ## [0.1.3] - 2025-10-10
 
 ### Added
