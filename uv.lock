@@ -48,8 +48,14 @@ dependencies = [
     { name = "websockets", version = "15.0.1", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple" }, marker = "python_full_version >= '3.9'" },
 ]
 
+[package.optional-dependencies]
+mic = [
+    { name = "pyaudio" },
+]
+
 [package.dev-dependencies]
 dev = [
+    { name = "pyaudio" },
     { name = "pytest", version = "8.3.5", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple" }, marker = "python_full_version < '3.9'" },
     { name = "pytest", version = "8.4.1", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple" }, marker = "python_full_version >= '3.9'" },
     { name = "pytest-asyncio", version = "0.24.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple" }, marker = "python_full_version < '3.9'" },
@@ -58,24 +64,23 @@ dev = [
     { name = "python-dotenv", version = "1.1.1", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple" }, marker = "python_full_version >= '3.9'" },
     { name = "ruff" },
 ]
-mic = [
-    { name = "pyaudio" },
-]
 
 [package.metadata]
 requires-dist = [
+    { name = "pyaudio", marker = "extra == 'mic'", specifier = ">=0.2.14" },
     { name = "typing-extensions", specifier = ">=4.13.2" },
     { name = "websockets", specifier = ">=13.1" },
 ]
+provides-extras = ["mic"]
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "pyaudio", specifier = ">=0.2.14" },
     { name = "pytest", specifier = ">=8.3.5" },
     { name = "pytest-asyncio", specifier = ">=0.24.0" },
     { name = "python-dotenv", specifier = ">=1.0.1" },
     { name = "ruff", specifier = ">=0.12.5" },
 ]
-mic = [{ name = "pyaudio", specifier = ">=0.2.14" }]
 
 [[package]]
 name = "iniconfig"
