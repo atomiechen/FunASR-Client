@@ -1,7 +1,7 @@
 import asyncio
 from functools import partial, wraps
 import json
-from typing import AsyncIterable, Awaitable, Callable, Iterable, TypeVar, Union
+from typing import AsyncIterable, Awaitable, Callable, Iterable, Optional, TypeVar, Union
 
 from typing_extensions import ParamSpec
 
@@ -37,16 +37,16 @@ def sync_to_async(
     return wrapped
 
 
-def decode_msg(msg: FunASRMessage, start_time: int = 0):
+def decode_msg(msg: FunASRMessage, start_time: Optional[int]):
     decoded_msg: FunASRMessageDecoded = {**msg}
     if "timestamp" in msg:
         decoded_msg["timestamp"] = json.loads(msg["timestamp"])
-    if "timestamp" in decoded_msg and start_time > 0:
+    if "timestamp" in decoded_msg and start_time is not None:
         decoded_msg["real_timestamp"] = [
             (pair[0] + start_time, pair[1] + start_time)
             for pair in decoded_msg["timestamp"]
         ]
-    if "stamp_sents" in decoded_msg and start_time > 0:
+    if "stamp_sents" in decoded_msg and start_time is not None:
         decoded_msg["real_stamp_sents"] = [
             {
                 **item,

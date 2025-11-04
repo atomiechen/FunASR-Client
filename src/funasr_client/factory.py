@@ -22,7 +22,7 @@ def funasr_client(
     blocking: bool = False,  # If True, use stream() / recv() to get responses
     auto_connect_in_with: bool = True,
     decode: Literal[True] = True,
-    start_time: int = 0,  # If > 0, decoded messages will include real timestamps
+    start_time: Optional[int] = None,  # If specified, decoded messages will include real timestamps
 ) -> FunASRClient[FunASRMessageDecoded]: ...
 
 
@@ -43,7 +43,7 @@ def funasr_client(
     blocking: bool = False,  # If True, use stream() / recv() to get responses
     auto_connect_in_with: bool = True,
     decode: Literal[False],
-    start_time: int = 0,  # If > 0, decoded messages will include real timestamps
+    start_time: Optional[int] = None,  # If specified, decoded messages will include real timestamps
 ) -> FunASRClient[FunASRMessage]: ...
 
 
@@ -64,7 +64,7 @@ def funasr_client(
     blocking: bool = False,  # If True, use stream() / recv() to get responses
     auto_connect_in_with: bool = True,
     decode: bool = True,
-    start_time: int = 0,  # If > 0, decoded messages will include real timestamps
+    start_time: Optional[int] = None,  # If specified, decoded messages will include real timestamps
 ) -> Union[FunASRClient[FunASRMessage], FunASRClient[FunASRMessageDecoded]]: ...
 
 
@@ -84,7 +84,7 @@ def funasr_client(
     blocking: bool = False,  # If True, use stream() / recv() to get responses
     auto_connect_in_with: bool = True,
     decode: bool = True,
-    start_time: int = 0,  # If > 0, decoded messages will include real timestamps
+    start_time: Optional[int] = None,  # If specified, decoded messages will include real timestamps
 ):
     """
     The factory function to create a `FunASRClient` instance with type hints.
@@ -132,7 +132,7 @@ def async_funasr_client(
     blocking: bool = False,  # If True, use stream() / recv() to get responses
     auto_connect_in_with: bool = True,
     decode: Literal[True] = True,
-    start_time: int = 0,  # If > 0, decoded messages will include real timestamps
+    start_time: Optional[int] = None,  # If specified, decoded messages will include real timestamps
 ) -> AsyncFunASRClient[FunASRMessageDecoded]: ...
 
 
@@ -153,7 +153,7 @@ def async_funasr_client(
     blocking: bool = False,  # If True, use stream() / recv() to get responses
     auto_connect_in_with: bool = True,
     decode: Literal[False],
-    start_time: int = 0,  # If > 0, decoded messages will include real timestamps
+    start_time: Optional[int] = None,  # If specified, decoded messages will include real timestamps
 ) -> AsyncFunASRClient[FunASRMessage]: ...
 
 
@@ -174,7 +174,7 @@ def async_funasr_client(
     blocking: bool = False,  # If True, use stream() / recv() to get responses
     auto_connect_in_with: bool = True,
     decode: bool = True,
-    start_time: int = 0,  # If > 0, decoded messages will include real timestamps
+    start_time: Optional[int] = None,  # If specified, decoded messages will include real timestamps
 ) -> Union[
     AsyncFunASRClient[FunASRMessage], AsyncFunASRClient[FunASRMessageDecoded]
 ]: ...
@@ -196,7 +196,7 @@ def async_funasr_client(
     blocking: bool = False,  # If True, use stream() / recv() to get responses
     auto_connect_in_with: bool = True,
     decode: bool = True,
-    start_time: int = 0,  # If > 0, decoded messages will include real timestamps
+    start_time: Optional[int] = None,  # If specified, decoded messages will include real timestamps
 ):
     """
     The factory function to create a `AsyncFunASRClient` instance with type hints.

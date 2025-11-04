@@ -95,7 +95,7 @@ def file_asr_stream(
     svs_itn: Optional[bool] = None,
     *,
     decode: Literal[True] = True,
-    start_time: int = 0,
+    start_time: Optional[int] = None,
 ) -> Generator[FunASRMessageDecoded, Any, None]: ...
 
 
@@ -114,7 +114,7 @@ def file_asr_stream(
     svs_itn: Optional[bool] = None,
     *,
     decode: Literal[False],
-    start_time: int = 0,
+    start_time: Optional[int] = None,
 ) -> Generator[FunASRMessage, Any, None]: ...
 
 
@@ -132,7 +132,7 @@ def file_asr_stream(
     svs_itn: Optional[bool] = None,
     *,
     decode: bool = True,
-    start_time: int = 0,
+    start_time: Optional[int] = None,
 ):
     """
     Recognize audio file and yield (decoded) messages.
@@ -192,7 +192,7 @@ def file_asr(
     svs_lang: Optional[str] = None,
     svs_itn: Optional[bool] = None,
     *,
-    start_time: int = 0,
+    start_time: Optional[int] = None,
 ):
     """
     Recognize audio file and return the merged decoded message.
@@ -231,7 +231,7 @@ async def async_file_asr_stream(
     svs_itn: Optional[bool] = None,
     *,
     decode: Literal[True] = True,
-    start_time: int = 0,
+    start_time: Optional[int] = None,
 ) -> AsyncGenerator[FunASRMessageDecoded, Any]:
     yield ...
 
@@ -251,7 +251,7 @@ async def async_file_asr_stream(
     svs_itn: Optional[bool] = None,
     *,
     decode: Literal[False],
-    start_time: int = 0,
+    start_time: Optional[int] = None,
 ) -> AsyncGenerator[FunASRMessage, Any]:
     yield ...
 
@@ -270,7 +270,7 @@ async def async_file_asr_stream(
     svs_itn: Optional[bool] = None,
     *,
     decode: bool = True,
-    start_time: int = 0,
+    start_time: Optional[int] = None,
 ):
     """
     Recognize audio file and yield (decoded) messages.
@@ -333,7 +333,7 @@ async def async_file_asr(
     svs_lang: Optional[str] = None,
     svs_itn: Optional[bool] = None,
     *,
-    start_time: int = 0,
+    start_time: Optional[int] = None,
 ):
     """
     Recognize audio file and return the merged decoded message.
