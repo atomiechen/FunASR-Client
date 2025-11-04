@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 
 
+## [0.1.5] - 2025-11-04
+
+### Changed
+
+- All default values of `start_time` changed from `0` to `None` to better indicate its optional nature. `real_timestamp` and `real_stamp_sents` will only be included in decoded messages if `start_time` is explicitly provided.
+
+
+
 ## [0.1.4] - 2025-10-26
 
 ### Changed
