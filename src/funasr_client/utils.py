@@ -1,7 +1,15 @@
 import asyncio
 from functools import partial, wraps
 import json
-from typing import AsyncIterable, Awaitable, Callable, Iterable, Optional, TypeVar, Union
+from typing import (
+    AsyncIterable,
+    Awaitable,
+    Callable,
+    Iterable,
+    Optional,
+    TypeVar,
+    Union,
+)
 
 from typing_extensions import ParamSpec
 

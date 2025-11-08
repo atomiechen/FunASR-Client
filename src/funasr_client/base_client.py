@@ -59,7 +59,9 @@ class BaseFunASRClient(ABC, Generic[MessageType]):
         blocking: bool = False,  # If True, use stream() / recv() to get responses
         auto_connect_in_with: bool = True,
         decode: bool = True,
-        start_time: Optional[int] = None,  # If specified, decoded messages will include real timestamps
+        start_time: Optional[
+            int
+        ] = None,  # If specified, decoded messages will include real timestamps
     ):
         self.uri = uri
         self.mode = mode
