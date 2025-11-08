@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 
 
+## [0.1.6] - 2025-11-08
+
+### Added
+
+- Clients now will reset internal states before connecting, allowing reuse of the same client instance for reconnections.
+- Add locking mechanism to synchronous and asynchronous clients to ensure concurrency safety.
+
+
+
 ## [0.1.5] - 2025-11-04
 
 ### Changed
