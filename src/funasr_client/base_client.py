@@ -96,6 +96,13 @@ class BaseFunASRClient(ABC, Generic[MessageType]):
         """Whether a final message has been received. Read-only."""
         return self._received_final
 
+    @property
+    def connected(self) -> bool:
+        """
+        Check if the WebSocket connection is established. Read-only.
+        """
+        return self._ws is not None
+
     def _additional_init(self):
         """
         Additional initialization for subclasses.
