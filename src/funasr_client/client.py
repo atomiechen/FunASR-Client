@@ -28,28 +28,30 @@ class FunASRClient(BaseFunASRClient[MessageType]):
     def _additional_init(self):
         self._loop_thread = None
         self._final_event = threading.Event()
+        self.lock = threading.Lock()
 
     def connect(self):
         """
         Connect to the FunASR WebSocket server.
         """
-        if self._ws is not None:
-            module_logger.warning("WebSocket connection already established.")
-            return
+        with self.lock:
+            if self._ws is not None:
+                module_logger.warning("WebSocket connection already established.")
+                return
 
-        self._reset()
-        args, kwargs = self._get_connect_params()
-        self._ws = ws_connect(*args, **kwargs)
+            self._reset()
+            args, kwargs = self._get_connect_params()
+            self._ws = ws_connect(*args, **kwargs)
 
-        if not self.blocking:
-            self._final_event.clear()
-            self._loop_thread = threading.Thread(
-                target=self._loop_receive,
-                # daemon=True,
-            )
-            self._loop_thread.start()
+            if not self.blocking:
+                self._final_event.clear()
+                self._loop_thread = threading.Thread(
+                    target=self._loop_receive,
+                    # daemon=True,
+                )
+                self._loop_thread.start()
 
-        self._ws.send(self._get_init_msg())
+            self._ws.send(self._get_init_msg())
 
     def _close_ws(self):
         """
@@ -84,12 +86,17 @@ class FunASRClient(BaseFunASRClient[MessageType]):
         finally:
             module_logger.debug("Receive loop ended.")
 
-    def signal_close(self):
+    def signal_close(self, use_lock: bool = True):
         """
         Signal the server that the client is done sending audio data.
         """
-        if self._ws is not None:
-            self._ws.send(self._close_msg)
+        if use_lock:
+            with self.lock:
+                if self._ws is not None:
+                    self._ws.send(self._close_msg)
+        else:
+            if self._ws is not None:
+                self._ws.send(self._close_msg)
 
     def close(
         self,
@@ -102,26 +109,28 @@ class FunASRClient(BaseFunASRClient[MessageType]):
         If timeout is specified, it will wait for that duration before closing.
         If timeout is None, it will wait indefinitely.
         """
-        try:
-            self.signal_close()
-            if self._loop_thread and wait_for_final:
-                if not self._final_event.wait(timeout=timeout):
-                    module_logger.warning(
-                        "Timeout reached, closing connection without waiting for final messages."
-                    )
-        finally:
-            # this will also raise ConnectionClosedOK to close the loop thread
-            self._close_ws()
-            if self._loop_thread:
-                self._loop_thread.join()
-                self._loop_thread = None
+        with self.lock:
+            try:
+                self.signal_close()
+                if self._loop_thread and wait_for_final:
+                    if not self._final_event.wait(timeout=timeout):
+                        module_logger.warning(
+                            "Timeout reached, closing connection without waiting for final messages."
+                        )
+            finally:
+                # this will also raise ConnectionClosedOK to close the loop thread
+                self._close_ws()
+                if self._loop_thread:
+                    self._loop_thread.join()
+                    self._loop_thread = None
 
     def send(self, data: bytes):
         """
         Send binary audio data.
         """
-        assert self._ws is not None, "WebSocket connection not established."
-        self._ws.send(data)
+        with self.lock:
+            assert self._ws is not None, "WebSocket connection not established."
+            self._ws.send(data)
 
     def _recv(self, timeout: Optional[float] = None):
         if self._received_final:
@@ -147,26 +156,28 @@ class FunASRClient(BaseFunASRClient[MessageType]):
         is ``0`` or negative, check if a message has been received already and
         return it, else raise :exc:`TimeoutError`.
         """
-        assert not self._loop_thread, "recv() is only available in blocking mode."
-        return self._recv(timeout=timeout)
+        with self.lock:
+            assert not self._loop_thread, "recv() is only available in blocking mode."
+            return self._recv(timeout=timeout)
 
     def stream(self):
         """
         Generator that yields incoming responses (only in blocking mode).
         """
-        assert not self._loop_thread, "stream() is only available in blocking mode."
+        with self.lock:
+            assert not self._loop_thread, "stream() is only available in blocking mode."
 
-        if self._ws is not None:
-            try:
-                while True:
-                    message = self._recv()
-                    if message is None:
-                        break
-                    yield message
-            except ConnectionClosedOK:
-                pass
-        else:
-            module_logger.debug("stream: WebSocket connection is not established.")
+            if self._ws is not None:
+                try:
+                    while True:
+                        message = self._recv()
+                        if message is None:
+                            break
+                        yield message
+                except ConnectionClosedOK:
+                    pass
+            else:
+                module_logger.debug("stream: WebSocket connection is not established.")
 
     def __enter__(self):
         if self.auto_connect_in_with:

@@ -28,6 +28,7 @@ class AsyncFunASRClient(BaseFunASRClient[MessageType]):
     def _additional_init(self):
         self._loop_task = None
         self._final_event = asyncio.Event()
+        self.lock = asyncio.Lock()
 
     def _transform_callback(self, callback: Callable[[MessageType], Any]):
         return sync_to_async(callback)
@@ -36,19 +37,20 @@ class AsyncFunASRClient(BaseFunASRClient[MessageType]):
         """
         Connect to the FunASR WebSocket server.
         """
-        if self._ws is not None:
-            module_logger.warning("WebSocket connection already established.")
-            return
+        async with self.lock:
+            if self._ws is not None:
+                module_logger.warning("WebSocket connection already established.")
+                return
 
-        self._reset()
-        args, kwargs = self._get_connect_params()
-        self._ws = await ws_connect(*args, **kwargs)
+            self._reset()
+            args, kwargs = self._get_connect_params()
+            self._ws = await ws_connect(*args, **kwargs)
 
-        if not self.blocking:
-            self._final_event.clear()
-            self._loop_task = asyncio.create_task(self._loop_receive())
+            if not self.blocking:
+                self._final_event.clear()
+                self._loop_task = asyncio.create_task(self._loop_receive())
 
-        await self._ws.send(self._get_init_msg())
+            await self._ws.send(self._get_init_msg())
 
     async def _close_ws(self):
         """
@@ -83,12 +85,17 @@ class AsyncFunASRClient(BaseFunASRClient[MessageType]):
         finally:
             module_logger.debug("Receive loop ended.")
 
-    async def signal_close(self):
+    async def signal_close(self, use_lock: bool = True):
         """
         Signal the server that the client is done sending audio data.
         """
-        if self._ws is not None:
-            await self._ws.send(self._close_msg)
+        if use_lock:
+            async with self.lock:
+                if self._ws is not None:
+                    await self._ws.send(self._close_msg)
+        else:
+            if self._ws is not None:
+                await self._ws.send(self._close_msg)
 
     async def close(
         self,
@@ -101,41 +108,43 @@ class AsyncFunASRClient(BaseFunASRClient[MessageType]):
         If timeout is specified, it will wait for that duration before closing.
         If timeout is None, it will wait indefinitely.
         """
-        try:
-            # Signal the server that the client is done sending audio data
-            await self.signal_close()
-            # If the loop task is running, wait for it to finish
-            if self._loop_task:
-                if not wait_for_final:
-                    timeout = 0  # mean no wait
-                # Wait for a short period to receive any final messages before closing
-                try:
-                    await asyncio.wait_for(self._final_event.wait(), timeout=timeout)
-                    module_logger.debug(
-                        "close: Loop task finished, closing connection."
-                    )
-                except (asyncio.TimeoutError, TimeoutError):
-                    module_logger.debug(
-                        "close: Timeout reached, closing connection without waiting for final messages."
-                    )
-        finally:
-            # Always close the WebSocket connection
-            await self._close_ws()
-            if self._loop_task:
-                try:
-                    await self._loop_task
-                except asyncio.CancelledError:
-                    pass
-                finally:
-                    self._loop_task.cancel()
-                    self._loop_task = None
+        async with self.lock:
+            try:
+                # Signal the server that the client is done sending audio data
+                await self.signal_close(use_lock=False)
+                # If the loop task is running, wait for it to finish
+                if self._loop_task:
+                    if not wait_for_final:
+                        timeout = 0  # mean no wait
+                    # Wait for a short period to receive any final messages before closing
+                    try:
+                        await asyncio.wait_for(self._final_event.wait(), timeout=timeout)
+                        module_logger.debug(
+                            "close: Loop task finished, closing connection."
+                        )
+                    except (asyncio.TimeoutError, TimeoutError):
+                        module_logger.debug(
+                            "close: Timeout reached, closing connection without waiting for final messages."
+                        )
+            finally:
+                # Always close the WebSocket connection
+                await self._close_ws()
+                if self._loop_task:
+                    try:
+                        await self._loop_task
+                    except asyncio.CancelledError:
+                        pass
+                    finally:
+                        self._loop_task.cancel()
+                        self._loop_task = None
 
     async def send(self, data: bytes):
         """
         Send binary audio data.
         """
-        assert self._ws is not None, "send: WebSocket connection is not established."
-        await self._ws.send(data)
+        async with self.lock:
+            assert self._ws is not None, "send: WebSocket connection is not established."
+            await self._ws.send(data)
 
     async def _recv(self, timeout: Optional[float] = None):
         if self._received_final:
@@ -165,26 +174,28 @@ class AsyncFunASRClient(BaseFunASRClient[MessageType]):
         is ``0`` or negative, check if a message has been received already and
         return it, else raise :exc:`TimeoutError`.
         """
-        assert not self._loop_task, "recv() is only available in blocking mode."
-        return await self._recv(timeout=timeout)
+        async with self.lock:
+            assert not self._loop_task, "recv() is only available in blocking mode."
+            return await self._recv(timeout=timeout)
 
     async def stream(self):
         """
         Generator that yields incoming responses (only in blocking mode).
         """
-        assert not self._loop_task, "stream() is only available in blocking mode."
+        async with self.lock:
+            assert not self._loop_task, "stream() is only available in blocking mode."
 
-        if self._ws is not None:
-            try:
-                while True:
-                    message = await self._recv()
-                    if message is None:
-                        break
-                    yield message
-            except ConnectionClosedOK:
-                pass
-        else:
-            module_logger.debug("stream: WebSocket connection is not established.")
+            if self._ws is not None:
+                try:
+                    while True:
+                        message = await self._recv()
+                        if message is None:
+                            break
+                        yield message
+                except ConnectionClosedOK:
+                    pass
+            else:
+                module_logger.debug("stream: WebSocket connection is not established.")
 
     async def __aenter__(self):
         if self.auto_connect_in_with:
