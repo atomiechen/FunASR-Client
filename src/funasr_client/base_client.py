@@ -85,7 +85,8 @@ class BaseFunASRClient(ABC, Generic[MessageType]):
         if callback is not None:
             self.on_message(callback)
 
-        self._received_final = False
+        # reset internal states
+        self._reset()
 
         # Subclass can implement this method to perform additional initialization
         self._additional_init()
@@ -169,6 +170,13 @@ class BaseFunASRClient(ABC, Generic[MessageType]):
                 ssl=ssl_context,
                 subprotocols=["binary"],  # type: ignore
             )
+
+    def _reset(self):
+        """
+        Reset internal states. Can be called when reconnecting.
+        """
+        self._received_final = False
+        self._ws = None
 
     def decode_msg(self, msg: FunASRMessage):
         return decode_msg(msg, start_time=self.start_time)

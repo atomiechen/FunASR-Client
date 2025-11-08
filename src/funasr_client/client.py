@@ -26,8 +26,8 @@ MessageType = TypeVar("MessageType", bound=FunASRMessageLike)
 
 class FunASRClient(BaseFunASRClient[MessageType]):
     def _additional_init(self):
-        self._ws = None
         self._loop_thread = None
+        self._final_event = threading.Event()
 
     def connect(self):
         """
@@ -37,11 +37,12 @@ class FunASRClient(BaseFunASRClient[MessageType]):
             module_logger.warning("WebSocket connection already established.")
             return
 
+        self._reset()
         args, kwargs = self._get_connect_params()
         self._ws = ws_connect(*args, **kwargs)
 
         if not self.blocking:
-            self._final_event = threading.Event()
+            self._final_event.clear()
             self._loop_thread = threading.Thread(
                 target=self._loop_receive,
                 # daemon=True,

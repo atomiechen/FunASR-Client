@@ -26,8 +26,8 @@ MessageType = TypeVar("MessageType", bound=FunASRMessageLike)
 
 class AsyncFunASRClient(BaseFunASRClient[MessageType]):
     def _additional_init(self):
-        self._ws = None
         self._loop_task = None
+        self._final_event = asyncio.Event()
 
     def _transform_callback(self, callback: Callable[[MessageType], Any]):
         return sync_to_async(callback)
@@ -40,11 +40,12 @@ class AsyncFunASRClient(BaseFunASRClient[MessageType]):
             module_logger.warning("WebSocket connection already established.")
             return
 
+        self._reset()
         args, kwargs = self._get_connect_params()
         self._ws = await ws_connect(*args, **kwargs)
 
         if not self.blocking:
-            self._final_event = asyncio.Event()
+            self._final_event.clear()
             self._loop_task = asyncio.create_task(self._loop_receive())
 
         await self._ws.send(self._get_init_msg())
