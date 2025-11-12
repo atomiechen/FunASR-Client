@@ -142,7 +142,7 @@ class FunASRClient(BaseFunASRClient[MessageType]):
         if self.decode:
             response = self.decode_msg(response)
         response = cast(MessageType, response)
-        if is_final_msg(response):
+        if self.mode == 'offline' or is_final_msg(response):
             self._received_final = True
         return response
 
