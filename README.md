@@ -2,6 +2,7 @@
 
 [![GitHub](https://img.shields.io/badge/github-FunASR--Client-blue?logo=github)](https://github.com/atomiechen/FunASR-Client)
 [![PyPI](https://img.shields.io/pypi/v/funasr-client?logo=pypi&logoColor=white)](https://pypi.org/project/funasr-client/)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/atomiechen/FunASR-Client)
 
 
 Really easy-to-use Python client for [FunASR][1] runtime service.
